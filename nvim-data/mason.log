@@ -1,0 +1,34 @@
+[INFO  11/13/2026 8:18:52 PM] ...zy/mason.nvim/lua/mason-core/installer/InstallRunner.lua:40: Executing installer for Package(name=tree-sitter-cli) {
+  debug = false,
+  force = false,
+  strict = false
+}
+[INFO  11/13/2026 8:18:52 PM] ...zy/mason.nvim/lua/mason-core/installer/InstallRunner.lua:40: Executing installer for Package(name=stylua) {
+  debug = false,
+  force = false,
+  strict = false
+}
+[INFO  11/13/2026 8:18:52 PM] ...zy/mason.nvim/lua/mason-core/installer/InstallRunner.lua:40: Executing installer for Package(name=shfmt) {
+  debug = false,
+  force = false,
+  strict = false
+}
+[INFO  11/13/2026 8:18:53 PM] ...zy/mason.nvim/lua/mason-core/installer/InstallRunner.lua:93: Installation succeeded for Package(name=shfmt)
+[INFO  11/13/2026 8:18:55 PM] ...zy/mason.nvim/lua/mason-core/installer/InstallRunner.lua:93: Installation succeeded for Package(name=stylua)
+[INFO  11/13/2026 8:18:55 PM] ...zy/mason.nvim/lua/mason-core/installer/InstallRunner.lua:93: Installation succeeded for Package(name=tree-sitter-cli)
+[INFO  11/13/2026 8:20:24 PM] ...zy/mason.nvim/lua/mason-core/installer/InstallRunner.lua:40: Executing installer for Package(name=lua-language-server) {
+  debug = false,
+  force = false,
+  strict = false
+}
+[ERROR 11/13/2026 8:20:24 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="unzip", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:24 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="wget", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:24 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="gzip", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:25 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="7z", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:25 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="luarocks", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:25 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="ruby", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:25 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="gem", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:25 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="composer", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:25 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="php", err="ENOENT: no such file or directory"
+[ERROR 11/13/2026 8:20:25 PM] ...cal/nvim-data/lazy/mason.nvim/lua/mason-core/process.lua:226: Failed to spawn process. cmd="julia", err="ENOENT: no such file or directory"
+[INFO  11/13/2026 8:20:33 PM] ...zy/mason.nvim/lua/mason-core/installer/InstallRunner.lua:93: Installation succeeded for Package(name=lua-language-server)
