@@ -114,4 +114,4 @@ The repository uses:
 
 ## License
 
-This project is distributed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
+This project is distributed under the MIT License 2.0. See [LICENSE](LICENSE) for details.
