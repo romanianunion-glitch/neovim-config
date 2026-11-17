@@ -1,122 +1,51 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-set -Eeuo pipefail
+set -eu
 
-# ==========================================
-# Neovim Configuration Installer
-# Arch Linux
-# ==========================================
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+BASH_INSTALLER="$SCRIPT_DIR/install-linux.bash"
 
-readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-readonly SOURCE_CONFIG="$SCRIPT_DIR/nvim"
-readonly CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-readonly TARGET_CONFIG="$CONFIG_HOME/nvim"
-
-# ------------------------------------------
-# Helpers
-# ------------------------------------------
-
-info() {
-  printf '\033[1;36m[INFO]\033[0m %s\n' "$1"
-}
-
-success() {
-  printf '\033[1;32m[SUCCESS]\033[0m %s\n' "$1"
-}
-
-error() {
-  printf '\033[1;31m[ERROR]\033[0m %s\n' "$1" >&2
-}
-
-# ------------------------------------------
-# System checks
-# ------------------------------------------
-
-if [[ ! -f /etc/arch-release ]]; then
-  error "This installer is intended for Arch Linux."
+if [ ! -f "$BASH_INSTALLER" ]; then
+  printf '[ERROR] Linux installer not found: %s\n' "$BASH_INSTALLER" >&2
   exit 1
 fi
 
-if [[ ! -d "$SOURCE_CONFIG" ]]; then
-  error "Configuration directory not found: $SOURCE_CONFIG"
-  error "Run this script from a valid repository checkout."
+if command -v bash >/dev/null 2>&1; then
+  exec bash "$BASH_INSTALLER" "$@"
+fi
+
+# Alpine's minimal install does not include Bash by default. Bootstrap only
+# this small interpreter prerequisite, then hand off to the full installer.
+if [ -r /etc/os-release ]; then
+  # shellcheck disable=SC1091
+  . /etc/os-release
+fi
+
+if [ "${ID:-}" != "alpine" ] || ! command -v apk >/dev/null 2>&1; then
+  printf '[ERROR] Bash is required to run the Linux installer. Install Bash, then rerun this script.\n' >&2
   exit 1
 fi
 
-info "Arch Linux detected."
+printf '[INFO] Bash is missing. The Alpine package "bash" is required by the installer.\n'
+printf 'Install Bash now? [Y/n] '
+read -r answer || answer=Y
 
-# ------------------------------------------
-# Neovim dependency
-# ------------------------------------------
-
-if ! command -v nvim >/dev/null 2>&1; then
-  info "Neovim is not installed."
-
-  read -r -p "Install Neovim using pacman? [y/N] " answer
-
-  case "$answer" in
-  [yY] | [yY][eE][sS])
-    sudo pacman -S --needed neovim
-    ;;
-  *)
-    error "Neovim is required. Installation cancelled."
+case "${answer:-Y}" in
+  [nN]|[nN][oO])
+    printf '[ERROR] Installation cancelled.\n' >&2
     exit 1
     ;;
-  esac
-fi
+esac
 
-# ------------------------------------------
-# Prepare installation
-# ------------------------------------------
-
-mkdir -p "$CONFIG_HOME"
-
-BACKUP_CONFIG=""
-
-if [[ -e "$TARGET_CONFIG" || -L "$TARGET_CONFIG" ]]; then
-  TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
-  BACKUP_CONFIG="$CONFIG_HOME/nvim.backup-$TIMESTAMP"
-
-  while [[ -e "$BACKUP_CONFIG" || -L "$BACKUP_CONFIG" ]]; do
-    BACKUP_CONFIG="${BACKUP_CONFIG}-$(printf '%04d' "$RANDOM")"
-  done
-
-  info "Existing Neovim configuration detected."
-  info "Backing it up to: $BACKUP_CONFIG"
-
-  mv -- "$TARGET_CONFIG" "$BACKUP_CONFIG"
-fi
-
-# ------------------------------------------
-# Install configuration
-# ------------------------------------------
-
-if cp -a -- "$SOURCE_CONFIG" "$TARGET_CONFIG"; then
-  success "Neovim configuration installed."
-
-  if [[ -n "$BACKUP_CONFIG" ]]; then
-    success "Previous configuration backed up successfully."
-  fi
+if [ "$(id -u)" -eq 0 ]; then
+  apk add bash
+elif command -v doas >/dev/null 2>&1; then
+  doas apk add bash
+elif command -v sudo >/dev/null 2>&1; then
+  sudo apk add bash
 else
-  error "Failed to install the configuration."
-
-  if [[ -n "$BACKUP_CONFIG" && -d "$BACKUP_CONFIG" ]]; then
-    mv -- "$BACKUP_CONFIG" "$TARGET_CONFIG"
-    info "Previous configuration restored."
-  fi
-
+  printf '[ERROR] Install Bash as root (apk add bash), then rerun this script.\n' >&2
   exit 1
 fi
 
-# ------------------------------------------
-# Finished
-# ------------------------------------------
-
-printf '\n'
-success "Installation complete!"
-info "Configuration: $TARGET_CONFIG"
-info "Start Neovim with: nvim"
-
-if [[ -n "$BACKUP_CONFIG" ]]; then
-  info "Backup: $BACKUP_CONFIG"
-fi
+exec bash "$BASH_INSTALLER" "$@"

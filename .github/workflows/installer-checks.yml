@@ -1,0 +1,34 @@
+name: Installer checks
+
+on:
+  push:
+    paths:
+      - "install.sh"
+      - "install-linux.bash"
+      - ".github/workflows/installer-checks.yml"
+  pull_request:
+    paths:
+      - "install.sh"
+      - "install-linux.bash"
+      - ".github/workflows/installer-checks.yml"
+
+jobs:
+  shell-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate shell syntax
+        run: |
+          sh -n install.sh
+          bash -n install-linux.bash
+
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y shellcheck
+
+      - name: Lint installers
+        run: |
+          shellcheck install.sh install-linux.bash
