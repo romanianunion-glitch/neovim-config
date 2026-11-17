@@ -61,7 +61,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-The installer reads `/etc/os-release`, detects the distribution and package manager, checks dependencies, and installs missing packages after one confirmation.
+The POSIX `install.sh` entrypoint hands off to the Bash installer. On minimal Alpine systems it can bootstrap Bash first. The installer reads `/etc/os-release`, detects the distribution and package manager, checks dependencies, and installs missing packages after one confirmation.
 
 #### Supported package managers
 
