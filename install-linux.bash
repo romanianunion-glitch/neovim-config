@@ -365,6 +365,48 @@ else
   success "All checked dependencies are already installed."
 fi
 
+# Debian and Ubuntu stable repositories can lag behind LazyVim's minimum
+# Neovim version. If APT's package is too old, use Neovim's official .deb
+# release asset instead of adding a third-party repository or PPA.
+if [[ "$PACKAGE_MODE" == "apt" ]] && command -v nvim >/dev/null 2>&1; then
+  NVIM_VERSION="$(get_nvim_version || true)"
+  if [[ -z "$NVIM_VERSION" ]] || ! version_at_least "$NVIM_VERSION" "$MIN_NVIM_VERSION"; then
+    if ! command -v dpkg >/dev/null 2>&1; then
+      error "Neovim is older than $MIN_NVIM_VERSION and dpkg is unavailable for the official .deb fallback."
+      exit 1
+    fi
+
+    case "$(dpkg --print-architecture)" in
+      amd64) NVIM_DEB_ASSET="nvim-linux-x86_64.deb" ;;
+      arm64) NVIM_DEB_ASSET="nvim-linux-arm64.deb" ;;
+      *)
+        error "The APT package is too old, and the official Neovim .deb fallback does not support this architecture."
+        error "Install Neovim $MIN_NVIM_VERSION or newer manually, then rerun this installer."
+        exit 1
+        ;;
+    esac
+
+    NVIM_DEB_DIR="$(mktemp -d)"
+    NVIM_DEB_PATH="$NVIM_DEB_DIR/neovim.deb"
+    NVIM_DEB_URL="https://github.com/neovim/neovim-releases/releases/latest/download/$NVIM_DEB_ASSET"
+
+    info "The distribution package is too old. Downloading the official Neovim release package."
+    if ! curl --fail --location --retry 3 --output "$NVIM_DEB_PATH" "$NVIM_DEB_URL"; then
+      rm -rf -- "$NVIM_DEB_DIR"
+      error "Could not download the official Neovim package."
+      exit 1
+    fi
+
+    if ! run_as_root apt install -y "$NVIM_DEB_PATH"; then
+      rm -rf -- "$NVIM_DEB_DIR"
+      error "Could not install the official Neovim package."
+      exit 1
+    fi
+
+    rm -rf -- "$NVIM_DEB_DIR"
+  fi
+fi
+
 # Nix may need its user profile added to PATH in non-login shells.
 if [[ "$PACKAGE_MODE" == "nix" ]]; then
   if [[ -d "$HOME/.nix-profile/bin" ]]; then
