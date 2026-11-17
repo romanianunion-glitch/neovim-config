@@ -114,6 +114,14 @@ DISTRO_NAME="${PRETTY_NAME:-$DISTRO_ID}"
 PACKAGE_MANAGER=""
 PACKAGE_MODE=""
 
+# Fedora Atomic desktops identify themselves through VARIANT_ID while keeping
+# ID=fedora. The ostree marker is an additional reliable signal.
+if [[ -e /run/ostree-booted ]] && command -v rpm-ostree >/dev/null 2>&1; then
+  PACKAGE_MANAGER="rpm-ostree"
+  PACKAGE_MODE="rpm-ostree"
+fi
+
+if [[ -z "$PACKAGE_MODE" ]]; then
 case "$DISTRO_ID" in
   bazzite|ublue-os|silverblue|kinoite|sericea|onyx)
     PACKAGE_MANAGER="rpm-ostree"
@@ -193,6 +201,7 @@ case "$DISTRO_ID" in
     esac
     ;;
 esac
+fi
 
 # ------------------------------------------
 # Validate checkout and package manager
