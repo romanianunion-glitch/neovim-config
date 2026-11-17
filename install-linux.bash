@@ -7,7 +7,8 @@ set -Eeuo pipefail
 # Linux distributions
 # ==========================================
 
-readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
 readonly SOURCE_CONFIG="$SCRIPT_DIR/nvim"
 readonly CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 readonly TARGET_CONFIG="$CONFIG_HOME/nvim"
@@ -143,7 +144,7 @@ case "$DISTRO_ID" in
     fi
     PACKAGE_MODE="dnf"
     ;;
-  opensuse*|opensuse-tumbleweed|opensuse-leap|suse)
+  opensuse*|suse)
     PACKAGE_MANAGER="zypper"
     PACKAGE_MODE="zypper"
     ;;
