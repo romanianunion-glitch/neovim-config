@@ -85,7 +85,7 @@ For package managers that modify the system, the installer uses `sudo` or `doas`
 
 If your distribution is not recognized, or its package manager is unavailable, install the requirements manually and rerun `install.sh`.
 
-**Important:** some stable distribution repositories ship Neovim older than 0.11.2. The installer checks the actual installed version and will not replace your config unless the minimum version is met.
+**Important:** some stable distribution repositories ship Neovim older than 0.11.2. On Debian/Ubuntu-based systems using APT on `amd64` or `arm64`, the installer falls back to the official Neovim release `.deb` if the repository package is too old. On other systems, it stops and asks you to install a newer Neovim build manually. It never replaces your config unless the minimum version is met.
 
 ### Windows
 
