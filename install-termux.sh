@@ -154,3 +154,4 @@ info "Start Neovim with: nvim"
 if [[ -n "$BACKUP_CONFIG" ]]; then
   info "Backup: $BACKUP_CONFIG"
 fi
+
