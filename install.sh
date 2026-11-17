@@ -2,7 +2,7 @@
 
 set -eu
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 BASH_INSTALLER="$SCRIPT_DIR/install-linux.bash"
 
 if [ ! -f "$BASH_INSTALLER" ]; then
@@ -17,6 +17,7 @@ fi
 # Alpine's minimal install does not include Bash by default. Bootstrap only
 # this small interpreter prerequisite, then hand off to the full installer.
 if [ -r /etc/os-release ]; then
+  # shellcheck disable=SC1091
   . /etc/os-release
 fi
 
