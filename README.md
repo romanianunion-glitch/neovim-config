@@ -19,6 +19,7 @@ This repository contains the configuration, plugin lockfile, and installers for 
 .
 ├── install.ps1
 ├── install.sh
+├── install-linux.bash
 ├── LICENSE
 ├── README.md
 └── nvim/
