@@ -104,7 +104,11 @@ case "$DISTRO_ID" in
     PACKAGE_MODE="pacman"
     ;;
   fedora|nobara|ultramarine|rhel|centos|rocky|almalinux)
-    PACKAGE_MANAGER="dnf"
+    if command -v dnf >/dev/null 2>&1; then
+      PACKAGE_MANAGER="dnf"
+    else
+      PACKAGE_MANAGER="dnf5"
+    fi
     PACKAGE_MODE="dnf"
     ;;
   opensuse*|opensuse-tumbleweed|opensuse-leap|suse)
@@ -245,7 +249,7 @@ install_missing_packages() {
       run_as_root "${args[@]}"
       ;;
     dnf)
-      args=(dnf install -y "${PACKAGES[@]}")
+      args=("$PACKAGE_MANAGER" install -y "${PACKAGES[@]}")
       run_as_root "${args[@]}"
       ;;
     zypper)
@@ -271,7 +275,7 @@ install_missing_packages() {
       run_as_root "${args[@]}"
       ;;
     xbps)
-      args=(xbps-install -S "${PACKAGES[@]}")
+      args=(xbps-install -S -y "${PACKAGES[@]}")
       run_as_root "${args[@]}"
       ;;
     nix)
@@ -281,7 +285,7 @@ install_missing_packages() {
         nix_packages+=("nixpkgs#$package")
       done
       info "Installing into the current user's Nix profile (no system configuration files will be changed)."
-      nix profile install "${nix_packages[@]}"
+      nix --extra-experimental-features "nix-command flakes" profile install "${nix_packages[@]}"
       ;;
     eopkg)
       args=(eopkg install -y "${PACKAGES[@]}")
@@ -335,6 +339,10 @@ if [[ "$PACKAGE_MODE" == "nix" ]]; then
   fi
   if [[ -d "$HOME/.local/state/nix/profile/bin" ]]; then
     export PATH="$HOME/.local/state/nix/profile/bin:$PATH"
+  fi
+elif [[ "$PACKAGE_MODE" == "guix" ]]; then
+  if [[ -d "$HOME/.guix-profile/bin" ]]; then
+    export PATH="$HOME/.guix-profile/bin:$PATH"
   fi
 fi
 
